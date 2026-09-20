@@ -6,6 +6,7 @@ export default function PasswordInput({ id, value, onChange, autoComplete, requi
     <div className="pw-wrap">
       <input
         id={id}
+        name={id}
         className="input"
         type={show ? "text" : "password"}
         value={value}

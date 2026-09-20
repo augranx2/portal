@@ -91,12 +91,21 @@ export default function Login({ next }) {
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
+    // Nilai dibaca langsung dari form, supaya isian otomatis dari browser
+    // (fitur simpan password Safari/Chrome) tetap terbaca.
+    const form = new FormData(e.currentTarget);
+    const u = String(form.get("username") || username).trim();
+    const p = String(form.get("password") || password);
+    if (!u || !p) {
+      setError("Isi username dan password.");
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, next }),
+        body: JSON.stringify({ username: u, password: p, next }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Login gagal.");
@@ -151,6 +160,7 @@ export default function Login({ next }) {
             </label>
             <input
               id="username"
+              name="username"
               className="lg-input"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -169,7 +179,7 @@ export default function Login({ next }) {
               <PasswordInput id="password" value={password} onChange={setPassword} autoComplete="current-password" />
             </div>
 
-            <button className="lg-btn" type="submit" disabled={loading || !username || !password}>
+            <button className="lg-btn" type="submit" disabled={loading}>
               {loading ? "Memeriksa…" : "Masuk"}
             </button>
 
