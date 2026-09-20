@@ -29,33 +29,33 @@ export default function Beranda({ session }) {
         <title>Aplikasi — Portal REMS</title>
       </Head>
       <Topbar session={session} active="apps" />
+      <section className="hero">
+        <div className="hero-in">
+          <p className="hero-date">
+            {now
+              ? now.toLocaleDateString("id-ID", {
+                  timeZone: "Asia/Jakarta",
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })
+              : "\u00a0"}
+          </p>
+          <h1>{now ? `${sapaan(now)}, ${namaDepan}` : `Halo, ${namaDepan}`}</h1>
+          <p className="hero-lead">
+            {milik.length > 0
+              ? `${milik.length} aplikasi tersedia untuk Anda. Pilih aplikasi untuk mulai bekerja.`
+              : "Belum ada aplikasi yang terhubung dengan akun Anda."}
+          </p>
+        </div>
+        <div className="hero-ornament" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
+      </section>
       <main className="page">
-        <section className="hero">
-          <div className="hero-text">
-            <p className="hero-date">
-              {now
-                ? now.toLocaleDateString("id-ID", {
-                    timeZone: "Asia/Jakarta",
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })
-                : "\u00a0"}
-            </p>
-            <h1>{now ? `${sapaan(now)}, ${namaDepan}` : `Halo, ${namaDepan}`}</h1>
-            <p className="hero-lead">
-              {milik.length > 0
-                ? `${milik.length} aplikasi tersedia untuk Anda. Pilih aplikasi untuk mulai bekerja.`
-                : "Belum ada aplikasi yang terhubung dengan akun Anda."}
-            </p>
-          </div>
-          <div className="hero-ornament" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </div>
-        </section>
 
         {milik.length === 0 ? (
           <div className="empty">
