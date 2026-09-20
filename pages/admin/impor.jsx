@@ -354,7 +354,7 @@ export default function Impor({ session }) {
                       Buat acak
                     </button>
                   </div>
-                  <span className="hint">Minimal 8 karakter, berisi huruf dan angka. Catat sebelum mengimpor.</span>
+                  <span className="hint">Minimal 6 karakter. Catat sebelum mengimpor.</span>
                 </div>
                 {sheets.tte?.rows && (
                   <label className="check">

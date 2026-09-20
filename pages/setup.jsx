@@ -85,7 +85,7 @@ export default function Setup() {
             <div className="field">
               <label htmlFor="password">Password</label>
               <PasswordInput id="password" value={form.password} onChange={set("password")} autoComplete="new-password" />
-              <span className="hint">Minimal 8 karakter, berisi huruf dan angka.</span>
+              <span className="hint">Minimal 6 karakter.</span>
             </div>
             <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
               {loading ? "Membuat…" : "Buat admin"}

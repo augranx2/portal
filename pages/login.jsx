@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useState } from "react";
 import PasswordInput from "../components/PasswordInput";
+import AppIcon from "../components/AppIcon";
 import { APPS } from "../lib/apps";
 import { getSession } from "../lib/session";
 import { safeNext } from "../lib/redirect";
@@ -47,30 +48,41 @@ export default function Login({ next }) {
       <Head>
         <title>Masuk — Portal REMS</title>
       </Head>
-      <main className="auth">
-        <section className="auth-brand">
-          <div className="auth-company">
-            <img src="/logo-rama.png" alt="" />
-            <span>PT. Rama Emerald Multi Sukses</span>
+      <main className="login">
+        <div className="login-bg" aria-hidden="true">
+          <span className="ring ring-1" />
+          <span className="ring ring-2" />
+          <span className="ring ring-3" />
+          <span className="glow glow-1" />
+          <span className="glow glow-2" />
+        </div>
+
+        <section className="login-brand">
+          <div className="login-logo">
+            <img src="/logo-rama.png" alt="Logo PT. Rama Emerald Multi Sukses" />
           </div>
-          <div>
-            <h1 className="auth-title">Portal REMS</h1>
-            <p className="auth-lead">Satu akun untuk semua aplikasi kerja. Masuk sekali, lalu buka aplikasi sesuai akses Anda.</p>
-          </div>
-          <div className="auth-apps" aria-label="Aplikasi di portal">
+          <p className="login-company">PT. Rama Emerald Multi Sukses</p>
+          <h1>Portal REMS</h1>
+          <p className="login-lead">
+            Satu akun untuk semua aplikasi kerja. Masuk sekali, lalu buka aplikasi sesuai akses Anda.
+          </p>
+          <ul className="login-apps" aria-label="Aplikasi di portal">
             {APPS.map((a) => (
-              <span key={a.key} style={{ "--c": a.warna }} title={a.nama}>
+              <li key={a.key} style={{ "--c": a.warna, "--c2": a.warna2 || a.warna }} title={a.nama}>
+                <span className="login-app-icon">
+                  <AppIcon name={a.ikon} size={16} />
+                </span>
                 {a.singkatan}
-              </span>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
 
-        <section className="auth-form-side">
-          <form className="auth-card" onSubmit={onSubmit} noValidate>
-            <div>
-              <h2>Masuk</h2>
-              <p className="sub">Gunakan username dan password portal Anda.</p>
+        <section className="login-panel">
+          <form className="login-card" onSubmit={onSubmit} noValidate>
+            <div className="login-card-head">
+              <h2>Selamat datang</h2>
+              <p>Masuk dengan username dan password Anda.</p>
             </div>
 
             {error && (
@@ -90,6 +102,7 @@ export default function Login({ next }) {
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
+                placeholder="contoh: qa.nama"
                 autoFocus
                 required
               />
@@ -100,12 +113,13 @@ export default function Login({ next }) {
               <PasswordInput id="password" value={password} onChange={setPassword} autoComplete="current-password" />
             </div>
 
-            <button className="btn btn-primary btn-block" type="submit" disabled={loading || !username || !password}>
+            <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={loading || !username || !password}>
               {loading ? "Memeriksa…" : "Masuk"}
             </button>
 
-            <p className="auth-foot">Lupa password? Hubungi admin portal untuk reset.</p>
+            <p className="login-help">Lupa password? Hubungi admin portal untuk reset.</p>
           </form>
+          <p className="login-copy">© {new Date().getFullYear()} PT. Rama Emerald Multi Sukses</p>
         </section>
       </main>
     </>

@@ -104,41 +104,85 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .alert-info { background: var(--blue-soft); color: var(--navy-2); }
 .alert-warn { background: var(--warn-bg); color: var(--warn); }
 
-/* ------------------------------ Login ----------------------------------- */
-.auth {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-}
-.auth-brand {
-  background: var(--navy);
-  color: #fff;
-  padding: 48px 56px;
-  display: flex; flex-direction: column; justify-content: space-between; gap: 40px;
-}
-.auth-company { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #c5d3e8; }
-.auth-company img { width: 40px; height: 40px; object-fit: contain; background: #fff; border-radius: var(--r-sm); padding: 4px; }
-.auth-title { font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; max-width: 12ch; }
-.auth-lead { margin-top: 16px; font-size: 17px; color: #c5d3e8; max-width: 38ch; }
-.auth-apps { display: flex; flex-wrap: wrap; gap: 8px; }
-.auth-apps span {
-  display: inline-flex; align-items: center; height: 34px; padding: 0 12px;
-  border-radius: var(--r-sm); font-size: 13px; font-weight: 700; letter-spacing: .02em;
-  color: #fff; border-left: 4px solid var(--c);
-  background: rgba(255, 255, 255, .07);
-}
-.auth-form-side { display: grid; place-items: center; padding: 40px 24px; }
-.auth-card { width: 100%; max-width: 380px; display: grid; gap: 18px; }
-.auth-card h2 { font-size: 24px; font-weight: 700; }
+/* ------------------------------ Halaman sederhana ----------------------- */
+/* Dipakai halaman ganti password wajib, setup, dan keluar. */
+.auth-form-side { display: grid; place-items: center; padding: 40px 20px; background: var(--paper); }
+.auth-card { width: 100%; max-width: 400px; display: grid; gap: 18px; }
+.auth-card h2 { font-size: 22px; font-weight: 700; }
 .auth-card .sub { color: var(--muted); font-size: 14px; margin-top: 4px; }
-.auth-foot { font-size: 13px; color: var(--muted); }
 
-@media (max-width: 860px) {
-  .auth { grid-template-columns: 1fr; }
-  .auth-brand { padding: 28px 24px; gap: 20px; }
-  .auth-title { font-size: 30px; }
-  .auth-lead { font-size: 15px; }
-  .auth-form-side { place-items: start center; padding: 28px 20px 40px; }
+/* ------------------------------ Login ----------------------------------- */
+.login {
+  position: relative; overflow: hidden;
+  min-height: 100vh;
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: center; gap: 48px;
+  padding: 48px clamp(24px, 6vw, 88px);
+  color: #fff;
+  background: linear-gradient(140deg, #041024 0%, #0b2545 42%, #15427d 78%, #1e4d8f 100%);
+}
+.login-bg { position: absolute; inset: 0; pointer-events: none; }
+.login-bg::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .09) 1px, transparent 1.4px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(115deg, #000 0%, transparent 60%);
+  -webkit-mask-image: linear-gradient(115deg, #000 0%, transparent 60%);
+}
+.ring { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .10); }
+.ring-1 { width: 620px; height: 620px; left: -220px; bottom: -300px; }
+.ring-2 { width: 420px; height: 420px; left: -120px; bottom: -200px; border-color: rgba(255, 255, 255, .14); }
+.ring-3 { width: 520px; height: 520px; right: -200px; top: -240px; border-color: rgba(255, 255, 255, .08); }
+.glow { position: absolute; border-radius: 50%; filter: blur(70px); }
+.glow-1 { width: 420px; height: 420px; right: 8%; bottom: -120px; background: rgba(11, 110, 92, .45); }
+.glow-2 { width: 360px; height: 360px; left: 20%; top: -160px; background: rgba(96, 165, 250, .22); }
+
+.login-brand, .login-panel { position: relative; z-index: 1; }
+.login-logo {
+  width: 72px; height: 72px; border-radius: 20px; background: #fff;
+  display: grid; place-items: center; box-shadow: 0 12px 32px -12px rgba(0, 0, 0, .5);
+}
+.login-logo img { width: 52px; height: 52px; object-fit: contain; }
+.login-company { margin-top: 22px; font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #9fb6d6; }
+.login-brand h1 { margin-top: 8px; font-size: clamp(38px, 5vw, 58px); line-height: 1.05; font-weight: 800; letter-spacing: -0.025em; }
+.login-lead { margin-top: 16px; font-size: 17px; line-height: 1.6; color: #c9d7ea; max-width: 40ch; }
+.login-apps { list-style: none; margin: 32px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.login-apps li {
+  display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 12px 0 5px;
+  border-radius: 999px; font-size: 13px; font-weight: 700; letter-spacing: .02em;
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14);
+}
+.login-app-icon {
+  width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+  background: linear-gradient(140deg, var(--c), var(--c2)); color: #fff;
+}
+
+.login-panel { display: grid; justify-items: center; gap: 16px; }
+.login-card {
+  width: 100%; max-width: 420px; display: grid; gap: 18px;
+  background: #fff; color: var(--ink);
+  border-radius: 22px; padding: 34px 32px 28px;
+  box-shadow: 0 30px 70px -28px rgba(2, 8, 20, .75), 0 0 0 1px rgba(255, 255, 255, .06);
+}
+.login-card-head h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.01em; }
+.login-card-head p { margin-top: 4px; color: var(--muted); font-size: 14px; }
+.login-help { font-size: 13px; color: var(--muted); text-align: center; }
+.login-copy { font-size: 12.5px; color: #8fa6c6; }
+.btn-lg { min-height: 48px; font-size: 15px; border-radius: 12px; }
+.login .btn-primary { background: linear-gradient(135deg, #1e4d8f, #0b2545); }
+.login .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #15427d, #041024); }
+
+@media (max-width: 900px) {
+  .login { grid-template-columns: 1fr; gap: 28px; padding: 36px 20px 28px; align-content: start; }
+  .login-logo { width: 56px; height: 56px; border-radius: 16px; }
+  .login-logo img { width: 40px; height: 40px; }
+  .login-company { margin-top: 16px; }
+  .login-brand h1 { font-size: 34px; }
+  .login-lead { font-size: 15px; }
+  .login-apps { margin-top: 20px; gap: 8px; }
+  .login-apps li { height: 32px; font-size: 12px; }
+  .login-app-icon { width: 22px; height: 22px; }
+  .login-card { padding: 26px 22px 22px; }
 }
 
 /* ------------------------------ Bilah atas ------------------------------- */
@@ -176,38 +220,98 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 
 /* ------------------------------ Halaman --------------------------------- */
-.page { max-width: 1160px; margin: 0 auto; padding: 36px 20px 64px; }
+.page { max-width: 1160px; margin: 0 auto; padding: 28px 20px 64px; }
 .page-head { margin-bottom: 28px; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
 .page-head h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.015em; line-height: 1.2; }
 .page-head p { color: var(--muted); margin-top: 6px; }
 
-/* ------------------------------ Kartu aplikasi -------------------------- */
-.apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
-.app-tile {
-  display: grid; grid-template-columns: 96px 1fr;
-  background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
+/* ------------------------------ Beranda --------------------------------- */
+.hero {
+  position: relative; overflow: hidden;
+  border-radius: 22px; padding: 34px 36px;
+  margin-bottom: 32px; color: #fff;
+  background: linear-gradient(135deg, #0b2545 0%, #15427d 60%, #1e4d8f 100%);
+}
+.hero::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .10) 1px, transparent 1.4px);
+  background-size: 20px 20px;
+  mask-image: linear-gradient(90deg, transparent 35%, #000 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 35%, #000 100%);
+}
+.hero-text { position: relative; z-index: 1; max-width: 62ch; }
+.hero-date { font-size: 13px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #a9bfdd; }
+.hero h1 { margin-top: 6px; font-size: clamp(26px, 3.4vw, 36px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+.hero-lead { margin-top: 8px; color: #c9d7ea; font-size: 15px; }
+.hero-ornament span { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .14); }
+.hero-ornament span:nth-child(1) { width: 260px; height: 260px; right: -60px; top: -110px; }
+.hero-ornament span:nth-child(2) { width: 180px; height: 180px; right: 40px; bottom: -120px; border-color: rgba(255, 255, 255, .10); }
+.hero-ornament span:nth-child(3) {
+  width: 120px; height: 120px; right: 150px; top: -40px; border: 0;
+  background: radial-gradient(circle, rgba(11, 110, 92, .55), transparent 70%);
+}
+
+.section-label { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+
+/* 5 kolom di layar lebar supaya kelima aplikasi sejajar dan simetris. */
+.app-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 980px) { .app-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.app-card {
+  display: flex; flex-direction: column;
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px;
   overflow: hidden; text-decoration: none; color: inherit;
-  transition: border-color .15s, box-shadow .15s;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
-.app-tile:hover { border-color: var(--c); box-shadow: 0 8px 24px -14px var(--c); }
-.app-tile-utama { grid-column: 1 / -1; grid-template-columns: 148px 1fr; }
-.app-tile-utama .app-mark { font-size: 30px; }
-.app-tile-utama .app-body { padding: 24px 24px 20px; }
-.app-tile-utama .app-body h2 { font-size: 21px; }
-.app-tile-utama .app-body p { font-size: 15px; }
-@media (max-width: 560px) {
-  .app-tile-utama { grid-template-columns: 104px 1fr; }
-  .app-tile-utama .app-mark { font-size: 24px; }
+.app-card:hover { transform: translateY(-4px); border-color: transparent; box-shadow: 0 18px 36px -18px var(--c); }
+.app-cover {
+  position: relative; overflow: hidden; height: 128px; padding: 16px;
+  display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
+  background: linear-gradient(140deg, var(--c) 0%, var(--c2) 100%); color: #fff;
 }
+.app-cover::before, .app-cover::after {
+  content: ""; position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .18);
+}
+.app-cover::before { width: 150px; height: 150px; right: -50px; bottom: -70px; }
+.app-cover::after { width: 90px; height: 90px; right: -10px; bottom: -30px; border-color: rgba(255, 255, 255, .12); }
+.app-icon {
+  position: absolute; top: 16px; right: 16px;
+  width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center;
+  background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .22);
+}
+.badge-utama {
+  display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px;
+  background: #fff; color: var(--c); font-size: 11.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+}
+.app-code { margin-top: auto; font-size: 30px; font-weight: 800; letter-spacing: .01em; line-height: 1; position: relative; }
+.app-info { padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.app-info h3 { margin: 0; font-size: 15.5px; font-weight: 700; line-height: 1.3; }
+.app-info p { font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+.app-foot { margin-top: auto; padding-top: 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.app-open { font-size: 13.5px; font-weight: 700; color: var(--c); white-space: nowrap; }
+.app-card:hover .app-open span { margin-left: 3px; }
+.app-open span { transition: margin .18s ease; }
+.app-note { font-size: 11.5px; color: var(--warn); }
+
+/* Tanda aplikasi kecil (dipakai di form akses admin) */
 .app-mark {
-  background: var(--c); color: #fff;
+  background: linear-gradient(140deg, var(--c), var(--c2, var(--c))); color: #fff;
   display: grid; place-items: center;
   font-weight: 800; font-size: 20px; letter-spacing: .02em;
 }
-.app-body { padding: 18px 18px 16px; display: grid; gap: 6px; align-content: start; }
-.app-body h2 { font-size: 17px; font-weight: 700; }
-.app-body p { color: var(--muted); font-size: 14px; }
-.app-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+@media (max-width: 560px) {
+  .hero { padding: 24px 22px; border-radius: 18px; margin-bottom: 24px; }
+  .app-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .app-cover { height: 104px; padding: 12px; }
+  .app-icon { top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 11px; }
+  .app-code { font-size: 24px; }
+  .badge-utama { height: 22px; padding: 0 8px; font-size: 10.5px; }
+  .app-info { padding: 12px; }
+  .app-info h3 { font-size: 14px; }
+  .app-info p { font-size: 12.5px; }
+  .app-open { display: none; }
+}
+
 .chip {
   display: inline-flex; align-items: center; height: 24px; padding: 0 9px;
   border-radius: 999px; font-size: 12px; font-weight: 600;

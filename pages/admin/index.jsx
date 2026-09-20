@@ -257,7 +257,7 @@ function Editor({ mode, awal, session, onClose, onSaved }) {
               {APPS.map((app) => {
                 const akses = form.apps[app.key];
                 return (
-                  <div key={app.key} className="access-row" style={{ "--c": app.warna }}>
+                  <div key={app.key} className="access-row" style={{ "--c": app.warna, "--c2": app.warna2 || app.warna }}>
                     <span className="app-mark" aria-hidden="true">
                       {app.singkatan}
                     </span>

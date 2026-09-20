@@ -70,7 +70,7 @@ export default function GantiPassword({ session }) {
           <div className="field">
             <label htmlFor="baru">Password baru</label>
             <PasswordInput id="baru" value={baru} onChange={setBaru} autoComplete="new-password" />
-            <span className="hint">Minimal 8 karakter, berisi huruf dan angka.</span>
+            <span className="hint">Minimal 6 karakter.</span>
           </div>
           <div className="field">
             <label htmlFor="ulang">Ulangi password baru</label>

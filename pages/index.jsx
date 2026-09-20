@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import Topbar from "../components/Topbar";
+import AppIcon from "../components/AppIcon";
 import { APPS } from "../lib/apps";
 import { withPage } from "../lib/guard";
 
@@ -18,7 +19,7 @@ export default function Beranda({ session }) {
   const [now, setNow] = useState(null);
   useEffect(() => setNow(new Date()), []);
 
-  // Aplikasi utama (TTE) selalu di urutan pertama.
+  // Aplikasi utama (TTE) selalu di urutan pertama, pojok kiri atas.
   const milik = APPS.filter((a) => session.apps?.[a.key]).sort((a, b) => Number(!!b.utama) - Number(!!a.utama));
   const namaDepan = session.nama.split(" ")[0];
 
@@ -29,10 +30,9 @@ export default function Beranda({ session }) {
       </Head>
       <Topbar session={session} active="apps" />
       <main className="page">
-        <div className="page-head">
-          <div>
-            <h1>{now ? `${sapaan(now)}, ${namaDepan}` : `Halo, ${namaDepan}`}</h1>
-            <p>
+        <section className="hero">
+          <div className="hero-text">
+            <p className="hero-date">
               {now
                 ? now.toLocaleDateString("id-ID", {
                     timeZone: "Asia/Jakarta",
@@ -43,8 +43,19 @@ export default function Beranda({ session }) {
                   })
                 : "\u00a0"}
             </p>
+            <h1>{now ? `${sapaan(now)}, ${namaDepan}` : `Halo, ${namaDepan}`}</h1>
+            <p className="hero-lead">
+              {milik.length > 0
+                ? `${milik.length} aplikasi tersedia untuk Anda. Pilih aplikasi untuk mulai bekerja.`
+                : "Belum ada aplikasi yang terhubung dengan akun Anda."}
+            </p>
           </div>
-        </div>
+          <div className="hero-ornament" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+        </section>
 
         {milik.length === 0 ? (
           <div className="empty">
@@ -54,31 +65,41 @@ export default function Beranda({ session }) {
               : "Minta admin portal menambahkan akses aplikasi untuk username Anda."}
           </div>
         ) : (
-          <div className="apps-grid">
-            {milik.map((app) => {
-              const akses = session.apps[app.key];
-              return (
-                <a
-                  key={app.key}
-                  href={app.url}
-                  className={`app-tile${app.utama ? " app-tile-utama" : ""}`}
-                  style={{ "--c": app.warna }}
-                >
-                  <span className="app-mark" aria-hidden="true">
-                    {app.singkatan}
-                  </span>
-                  <div className="app-body">
-                    <h2>{app.nama}</h2>
-                    <p>{app.deskripsi}</p>
-                    <div className="app-meta">
-                      <span className="chip">Peran: {akses.role}</span>
-                      {!app.sso && <span className="chip chip-warn">Login di aplikasi</span>}
+          <>
+            <h2 className="section-label">Aplikasi Anda</h2>
+            <div className="app-grid">
+              {milik.map((app) => {
+                const akses = session.apps[app.key];
+                return (
+                  <a
+                    key={app.key}
+                    href={app.url}
+                    className="app-card"
+                    style={{ "--c": app.warna, "--c2": app.warna2 || app.warna }}
+                  >
+                    <div className="app-cover">
+                      {app.utama && <span className="badge-utama">★ Utama</span>}
+                      <span className="app-icon">
+                        <AppIcon name={app.ikon} size={26} />
+                      </span>
+                      <span className="app-code">{app.singkatan}</span>
                     </div>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
+                    <div className="app-info">
+                      <h3>{app.nama}</h3>
+                      <p>{app.deskripsi}</p>
+                      <div className="app-foot">
+                        <span className="chip">{akses.role}</span>
+                        <span className="app-open">
+                          Buka <span aria-hidden="true">→</span>
+                        </span>
+                      </div>
+                      {!app.sso && <span className="app-note">Masih login di aplikasi</span>}
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          </>
         )}
       </main>
     </>
