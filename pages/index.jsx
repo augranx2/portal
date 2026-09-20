@@ -18,7 +18,8 @@ export default function Beranda({ session }) {
   const [now, setNow] = useState(null);
   useEffect(() => setNow(new Date()), []);
 
-  const milik = APPS.filter((a) => session.apps?.[a.key]);
+  // Aplikasi utama (TTE) selalu di urutan pertama.
+  const milik = APPS.filter((a) => session.apps?.[a.key]).sort((a, b) => Number(!!b.utama) - Number(!!a.utama));
   const namaDepan = session.nama.split(" ")[0];
 
   return (
@@ -57,7 +58,12 @@ export default function Beranda({ session }) {
             {milik.map((app) => {
               const akses = session.apps[app.key];
               return (
-                <a key={app.key} href={app.url} className="app-tile" style={{ "--c": app.warna }}>
+                <a
+                  key={app.key}
+                  href={app.url}
+                  className={`app-tile${app.utama ? " app-tile-utama" : ""}`}
+                  style={{ "--c": app.warna }}
+                >
                   <span className="app-mark" aria-hidden="true">
                     {app.singkatan}
                   </span>

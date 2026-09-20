@@ -38,24 +38,36 @@ export default handler(async (req, res) => {
   const masalah = passwordProblem(password, username);
   if (masalah) return res.status(400).json({ error: masalah });
 
-  // Kunci setup lebih dulu supaya tidak bisa dijalankan dua kali bersamaan.
+  // Periksa konfigurasi SEBELUM mengunci setup, supaya kesalahan pengaturan
+  // tidak membuat setup terkunci padahal admin belum berhasil dibuat.
+  if ((process.env.SSO_SECRET || "").length < 32) {
+    return res.status(500).json({ error: "SSO_SECRET belum diisi atau kurang dari 32 karakter. Perbaiki di Vercel lalu Redeploy." });
+  }
+
+  // Kunci setup supaya tidak bisa dijalankan dua kali bersamaan.
   const dapat = await redis().set(k("setup_done"), new Date().toISOString(), { nx: true });
   if (!dapat) return res.status(403).json({ error: "Setup sudah selesai." });
 
-  const existing = await getUser(username);
-  const user = await saveUser({
-    ...(existing || {}),
-    username,
-    nama: String(nama).trim().slice(0, 120),
-    status: "Aktif",
-    berlakuSampai: "",
-    admin: true,
-    apps: existing?.apps || {},
-    passwordHash: await hashPassword(password),
-    wajibGantiPassword: false,
-    dibuat: existing?.dibuat || new Date().toISOString(),
-  });
-  await createSession(res, user);
-  await logAudit({ aksi: "setup_admin", oleh: username, ip: clientIp(req) });
+  try {
+    const existing = await getUser(username);
+    const user = await saveUser({
+      ...(existing || {}),
+      username,
+      nama: String(nama).trim().slice(0, 120),
+      status: "Aktif",
+      berlakuSampai: "",
+      admin: true,
+      apps: existing?.apps || {},
+      passwordHash: await hashPassword(password),
+      wajibGantiPassword: false,
+      dibuat: existing?.dibuat || new Date().toISOString(),
+    });
+    await createSession(res, user);
+    await logAudit({ aksi: "setup_admin", oleh: username, ip: clientIp(req) });
+  } catch (err) {
+    // Gagal di tengah jalan: buka kembali setup supaya bisa diulang.
+    await redis().del(k("setup_done"));
+    throw err;
+  }
   res.status(200).json({ ok: true });
 });

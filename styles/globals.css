@@ -190,6 +190,15 @@ button, input, select, textarea { font: inherit; color: inherit; }
   transition: border-color .15s, box-shadow .15s;
 }
 .app-tile:hover { border-color: var(--c); box-shadow: 0 8px 24px -14px var(--c); }
+.app-tile-utama { grid-column: 1 / -1; grid-template-columns: 148px 1fr; }
+.app-tile-utama .app-mark { font-size: 30px; }
+.app-tile-utama .app-body { padding: 24px 24px 20px; }
+.app-tile-utama .app-body h2 { font-size: 21px; }
+.app-tile-utama .app-body p { font-size: 15px; }
+@media (max-width: 560px) {
+  .app-tile-utama { grid-template-columns: 104px 1fr; }
+  .app-tile-utama .app-mark { font-size: 24px; }
+}
 .app-mark {
   background: var(--c); color: #fff;
   display: grid; place-items: center;

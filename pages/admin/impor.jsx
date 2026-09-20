@@ -8,8 +8,10 @@ import { withPage } from "../../lib/guard";
 
 export const getServerSideProps = withPage({ admin: true });
 
-// Aplikasi yang user-nya ada di Google Sheets. TTE (Redis) menyusul terpisah.
+// Sumber user. TTE dibaca langsung dari database TTE (hanya baca);
+// yang lain dari CSV tab user di Google Sheets.
 const SUMBER = [
+  { key: "tte", sheet: "Diambil langsung dari database TTE", langsung: true },
   { key: "dms", sheet: "DMS - Database, tab Users" },
   { key: "emv", sheet: "EM Viable - Data QA REMS, tab User_Roles" },
   { key: "emnv", sheet: "EM Non Viable - Database, tab User_Roles" },
@@ -133,6 +135,8 @@ export default function Impor({ session }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [hasil, setHasil] = useState(null);
+  const [pakaiPasswordTte, setPakaiPasswordTte] = useState(false);
+  const [ambilTte, setAmbilTte] = useState(false);
 
   useEffect(() => {
     api("/api/admin/users")
@@ -155,7 +159,40 @@ export default function Impor({ session }) {
     reader.readAsText(file, "utf-8");
   }
 
-  const { users, catatan } = useMemo(() => gabungkan(sheets), [sheets]);
+  async function muatTte() {
+    setAmbilTte(true);
+    setHasil(null);
+    try {
+      const d = await api("/api/admin/tte-users");
+      const rows = d.users.map((u) => ({
+        username: u.username,
+        nama: u.nama,
+        role: u.role,
+        departemen: u.departemen,
+        status: u.aktif ? "Aktif" : "Nonaktif",
+        punyaPassword: u.punyaPassword,
+      }));
+      setSheets((s) => ({ ...s, tte: { nama: "Database TTE", rows } }));
+    } catch (err) {
+      setSheets((s) => ({ ...s, tte: { nama: "Database TTE", error: err.message } }));
+    } finally {
+      setAmbilTte(false);
+    }
+  }
+
+  const { users, catatan: catatanGabung } = useMemo(() => gabungkan(sheets), [sheets]);
+  const catatan = useMemo(() => {
+    const extra = [];
+    const tte = sheets.tte?.rows || [];
+    for (const bawaan of ["admin", "dev"]) {
+      if (tte.some((r) => r.username === bawaan)) {
+        extra.push(
+          `TTE: akun bawaan "${bawaan}" ikut terbaca. Pastikan password-nya sudah bukan password bawaan, terutama bila memakai password TTE. Hapus aksesnya di portal bila akun ini tidak dipakai.`
+        );
+      }
+    }
+    return [...extra, ...catatanGabung];
+  }, [sheets, catatanGabung]);
   const adaFile = Object.values(sheets).some((s) => s.rows);
   const jumlahBaru = existing ? users.filter((u) => !existing.has(u.username)).length : 0;
 
@@ -166,7 +203,7 @@ export default function Impor({ session }) {
     try {
       const data = await api("/api/admin/import", {
         method: "POST",
-        body: { users, passwordAwal, timpaAkses: timpa },
+        body: { users, passwordAwal, timpaAkses: timpa, pakaiPasswordTte: !!sheets.tte?.rows && pakaiPasswordTte },
       });
       setHasil(data);
       const d = await api("/api/admin/users");
@@ -188,23 +225,36 @@ export default function Impor({ session }) {
         <div className="page-head">
           <div>
             <h1>Impor dari sheet</h1>
-            <p>Gabungkan user dari sheet DMS, EMV, EMNV, dan SPA menjadi satu akun per username.</p>
+            <p>Gabungkan user TTE, DMS, EMV, EMNV, dan SPA menjadi satu akun per username.</p>
           </div>
         </div>
         <AdminTabs active="impor" />
 
         <div className="steps">
           <section className="panel panel-pad step">
-            <h2>1. Unggah file CSV tiap aplikasi</h2>
+            <h2>1. Ambil user TTE dan unggah CSV aplikasi lain</h2>
             <p>
-              Buka spreadsheet, pilih tab user, lalu File, Download, Comma Separated Values (.csv). File dibaca di
-              browser ini saja. Kolom password, hash, dan salt tidak dikirim ke server. Hapus file CSV dari komputer
-              setelah impor selesai.
+              User TTE diambil langsung dari database TTE tanpa mengubah apa pun di TTE. Untuk aplikasi lain, buka
+              spreadsheet, pilih tab user, lalu File, Download, Comma Separated Values (.csv). File dibaca di browser
+              ini saja; kolom password, hash, dan salt tidak dikirim ke server. Hapus file CSV setelah impor selesai.
             </p>
             <div className="upload-grid">
-              {SUMBER.map(({ key, sheet }) => {
+              {SUMBER.map(({ key, sheet, langsung }) => {
                 const app = APP_MAP[key];
                 const s = sheets[key];
+                if (langsung) {
+                  return (
+                    <div key={key} className="upload" style={{ "--c": app.warna }}>
+                      <span className="t">{app.nama}</span>
+                      <span className="s">{sheet}</span>
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={muatTte} disabled={ambilTte}>
+                        {ambilTte ? "Mengambil…" : s?.rows ? "Ambil ulang" : "Ambil user TTE"}
+                      </button>
+                      {s?.error && <span className="s" style={{ color: "var(--danger)" }}>{s.error}</span>}
+                      {s?.rows && <span className="s" style={{ color: "var(--ok)" }}>{s.rows.length} user terbaca</span>}
+                    </div>
+                  );
+                }
                 return (
                   <label key={key} className="upload" style={{ "--c": app.warna }}>
                     <span className="t">{app.nama}</span>
@@ -306,6 +356,22 @@ export default function Impor({ session }) {
                   </div>
                   <span className="hint">Minimal 8 karakter, berisi huruf dan angka. Catat sebelum mengimpor.</span>
                 </div>
+                {sheets.tte?.rows && (
+                  <label className="check">
+                    <input
+                      type="checkbox"
+                      checked={pakaiPasswordTte}
+                      onChange={(e) => setPakaiPasswordTte(e.target.checked)}
+                    />
+                    <span>
+                      Pengguna TTE memakai password TTE-nya
+                      <span className="hint" style={{ display: "block" }}>
+                        Yang sudah punya akun TTE aktif tidak perlu password baru: login portal memakai password TTE
+                        yang biasa dipakai. Pengguna lain tetap memakai password awal di atas.
+                      </span>
+                    </span>
+                  </label>
+                )}
                 <label className="check">
                   <input type="checkbox" checked={timpa} onChange={(e) => setTimpa(e.target.checked)} />
                   <span>
@@ -321,6 +387,7 @@ export default function Impor({ session }) {
                   <div className="alert alert-ok" role="status">
                     Impor selesai: {hasil.dibuat.length} akun dibuat, {hasil.diperbarui.length} diperbarui,{" "}
                     {hasil.dilewati.length} tidak berubah.
+                    {hasil.passwordTte?.length > 0 && ` ${hasil.passwordTte.length} akun memakai password TTE.`}
                   </div>
                 )}
 

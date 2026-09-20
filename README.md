@@ -4,6 +4,8 @@ Satu website untuk masuk ke semua aplikasi PT. Rama Emerald Multi Sukses
 (TTE, DMS, EM Viable, EM Non Viable, SPA). Satu akun per orang, dan setiap
 orang hanya melihat aplikasi yang menjadi haknya.
 
+TTE adalah aplikasi utama: selalu tampil paling atas dan paling besar.
+
 Tahap ini: portal, data user pusat, dan halaman admin. Aplikasi masih memakai
 login masing-masing (kartu bertanda "Login di aplikasi") sampai disambungkan
 satu per satu pada tahap berikutnya.
@@ -31,16 +33,22 @@ bcrypt untuk password, JWT (jose) untuk tiket login lintas subdomain.
    - `ALLOWED_REDIRECT_DOMAIN`: `myrama.id`
    - `SESSION_HOURS`: `12`, `SESSION_IDLE_MINUTES`: `60`
    - `SETUP_KEY`: kode sekali pakai untuk membuat admin pertama.
+   - `TTE_KV_REST_API_URL` dan `TTE_KV_REST_API_READ_ONLY_TOKEN`: salin dari
+     project TTE (nilai `KV_REST_API_URL` dan `KV_REST_API_READ_ONLY_TOKEN`).
+     Dipakai untuk mengambil daftar user TTE saat impor. Token ini hanya
+     bisa membaca, jadi data TTE tidak mungkin berubah.
 4. **Domain.** Di Settings, Domains, tambahkan `portal.myrama.id`, lalu
    buat CNAME di DNS seperti subdomain lainnya.
 5. **Deploy**, lalu buka `https://portal.myrama.id/setup` dan buat admin
    pertama dengan `SETUP_KEY`. Halaman setup terkunci permanen setelahnya.
-6. **Impor user.** Buka menu Kelola pengguna, Impor dari sheet. Unduh tab
-   user dari keempat spreadsheet sebagai CSV (File, Download, .csv),
-   unggah, periksa, tentukan password awal, lalu impor.
+6. **Impor user.** Buka menu Kelola pengguna, Impor dari sheet. Klik
+   "Ambil user TTE", lalu unggah CSV tab user dari keempat spreadsheet
+   (File, Download, .csv). Periksa, tentukan password awal, lalu impor.
+   Opsional: centang "Pengguna TTE memakai password TTE-nya" supaya
+   pengguna TTE login portal dengan password TTE yang sudah biasa dipakai.
 7. **Rapikan akun.** Di menu Pengguna, cek hasil impor. Untuk `tamu`,
    `bbpom`, dan `bpom`, isi tanggal "Berlaku sampai" atau set Nonaktif di
-   luar masa audit. Akses TTE diatur manual di sini.
+   luar masa audit.
 
 ## Menjalankan di komputer sendiri
 

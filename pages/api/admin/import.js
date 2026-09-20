@@ -4,6 +4,7 @@ import { hashPassword, passwordProblem } from "../../../lib/password";
 import { sanitizeApps } from "../../../lib/apps";
 import { revokeUserSessions } from "../../../lib/session";
 import { logAudit } from "../../../lib/audit";
+import { readTteUsers } from "../../../lib/tte";
 
 export const config = { api: { bodyParser: { sizeLimit: "2mb" } } };
 
@@ -12,7 +13,11 @@ export const config = { api: { bodyParser: { sizeLimit: "2mb" } } };
  * Browser sudah menggabungkan baris per username; server hanya memvalidasi
  * dan menyimpan. Kolom password/hash/salt dari sheet TIDAK pernah dikirim.
  *
- * body: { users: [{ username, nama, apps }], passwordAwal, timpaAkses }
+ * body: { users: [{ username, nama, apps }], passwordAwal, timpaAkses, pakaiPasswordTte }
+ *
+ * pakaiPasswordTte: akun yang ada di TTE memakai password TTE-nya (hash bcrypt
+ * yang sama), jadi pemiliknya tidak perlu password baru. Berlaku untuk akun
+ * baru, dan untuk akun lama yang belum pernah mengganti password awal.
  */
 export default handler(async (req, res) => {
   if (!allowMethods(req, res, ["POST"])) return;
@@ -30,7 +35,15 @@ export default handler(async (req, res) => {
   const timpaAkses = !!req.body?.timpaAkses;
 
   const hashAwal = await hashPassword(passwordAwal);
-  const hasil = { dibuat: [], diperbarui: [], dilewati: [] };
+  const hasil = { dibuat: [], diperbarui: [], dilewati: [], passwordTte: [] };
+
+  // Hash password TTE dibaca langsung di server, tidak pernah lewat browser.
+  const hashTte = new Map();
+  if (req.body?.pakaiPasswordTte) {
+    for (const t of await readTteUsers()) {
+      if (t.aktif && t.hash) hashTte.set(t.username, t.hash);
+    }
+  }
 
   for (const row of rows) {
     const username = normalizeUsername(row.username);
@@ -46,6 +59,8 @@ export default handler(async (req, res) => {
     const nama = String(row.nama || "").trim().slice(0, 120) || username;
     const existing = await getUser(username);
 
+    const tteHash = hashTte.get(username);
+
     if (!existing) {
       await saveUser({
         username,
@@ -54,23 +69,33 @@ export default handler(async (req, res) => {
         berlakuSampai: "",
         admin: false,
         apps,
-        passwordHash: hashAwal,
-        wajibGantiPassword: true,
+        passwordHash: tteHash || hashAwal,
+        wajibGantiPassword: !tteHash,
+        passwordDariTte: !!tteHash,
         dibuat: new Date().toISOString(),
       });
       hasil.dibuat.push(username);
+      if (tteHash) hasil.passwordTte.push(username);
       continue;
     }
 
-    // User lama: password & status tidak diubah, hanya akses aplikasi.
+    // User lama: status tidak diubah. Password hanya diganti ke password TTE
+    // bila pemiliknya belum pernah mengganti password awal portal.
     const gabungan = { ...(existing.apps || {}) };
     for (const [key, val] of Object.entries(apps)) {
       if (timpaAkses || !gabungan[key]) gabungan[key] = val;
     }
-    if (JSON.stringify(gabungan) !== JSON.stringify(existing.apps || {})) {
-      await saveUser({ ...existing, apps: gabungan });
+    const aksesBerubah = JSON.stringify(gabungan) !== JSON.stringify(existing.apps || {});
+    const pakaiTte = !!tteHash && existing.wajibGantiPassword && existing.username !== session.username;
+    if (aksesBerubah || pakaiTte) {
+      await saveUser({
+        ...existing,
+        apps: gabungan,
+        ...(pakaiTte ? { passwordHash: tteHash, wajibGantiPassword: false, passwordDariTte: true } : {}),
+      });
       if (existing.username !== session.username) await revokeUserSessions(username);
       hasil.diperbarui.push(username);
+      if (pakaiTte) hasil.passwordTte.push(username);
     } else {
       hasil.dilewati.push({ username, alasan: "sudah sama" });
     }
@@ -79,7 +104,7 @@ export default handler(async (req, res) => {
   await logAudit({
     aksi: "impor_user",
     oleh: session.username,
-    detail: `${hasil.dibuat.length} dibuat, ${hasil.diperbarui.length} diperbarui, ${hasil.dilewati.length} dilewati`,
+    detail: `${hasil.dibuat.length} dibuat, ${hasil.diperbarui.length} diperbarui, ${hasil.dilewati.length} dilewati${hasil.passwordTte.length ? `, ${hasil.passwordTte.length} memakai password TTE` : ""}`,
     ip: clientIp(req),
   });
   res.status(200).json({ ok: true, ...hasil });
