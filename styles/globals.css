@@ -38,7 +38,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--paper);
+  background: #fff;
   color: var(--ink);
   font-family: var(--sans);
   font-size: 15px;
@@ -112,77 +112,111 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .auth-card .sub { color: var(--muted); font-size: 14px; margin-top: 4px; }
 
 /* ------------------------------ Login ----------------------------------- */
-.login {
-  position: relative; overflow: hidden;
-  min-height: 100vh;
-  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  align-items: center; gap: 48px;
-  padding: 48px clamp(24px, 6vw, 88px);
-  color: #fff;
-  background: linear-gradient(140deg, #041024 0%, #0b2545 42%, #15427d 78%, #1e4d8f 100%);
+/* Tata letak dua sisi: ilustrasi + judul di kiri, form sederhana di kanan. */
+.lg {
+  min-height: 100vh; background: #fff;
+  display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
 }
-.login-bg { position: absolute; inset: 0; pointer-events: none; }
-.login-bg::before {
-  content: ""; position: absolute; inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, .09) 1px, transparent 1.4px);
-  background-size: 22px 22px;
-  mask-image: linear-gradient(115deg, #000 0%, transparent 60%);
-  -webkit-mask-image: linear-gradient(115deg, #000 0%, transparent 60%);
+.lg-left { position: relative; padding: 40px clamp(24px, 4vw, 56px); display: flex; flex-direction: column; overflow: hidden; }
+.lg-brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; color: var(--navy); }
+.lg-brand img { width: 52px; height: 52px; object-fit: contain; }
+.lg-stage { position: relative; flex: 1; min-height: 520px; }
+.lg-title {
+  position: absolute; left: 0; bottom: 36px; z-index: 3;
+  font-size: clamp(38px, 4.2vw, 56px); line-height: 1.08; font-weight: 800; letter-spacing: -0.03em; color: var(--ink);
 }
-.ring { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .10); }
-.ring-1 { width: 620px; height: 620px; left: -220px; bottom: -300px; }
-.ring-2 { width: 420px; height: 420px; left: -120px; bottom: -200px; border-color: rgba(255, 255, 255, .14); }
-.ring-3 { width: 520px; height: 520px; right: -200px; top: -240px; border-color: rgba(255, 255, 255, .08); }
-.glow { position: absolute; border-radius: 50%; filter: blur(70px); }
-.glow-1 { width: 420px; height: 420px; right: 8%; bottom: -120px; background: rgba(11, 110, 92, .45); }
-.glow-2 { width: 360px; height: 360px; left: 20%; top: -160px; background: rgba(96, 165, 250, .22); }
+.lg-title span { color: var(--blue); }
 
-.login-brand, .login-panel { position: relative; z-index: 1; }
-.login-logo {
-  width: 72px; height: 72px; border-radius: 20px; background: #fff;
-  display: grid; place-items: center; box-shadow: 0 12px 32px -12px rgba(0, 0, 0, .5);
+.lg-right {
+  border-left: 1px solid var(--line);
+  display: grid; place-items: center; padding: 40px clamp(24px, 5vw, 72px);
 }
-.login-logo img { width: 52px; height: 52px; object-fit: contain; }
-.login-company { margin-top: 22px; font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #9fb6d6; }
-.login-brand h1 { margin-top: 8px; font-size: clamp(38px, 5vw, 58px); line-height: 1.05; font-weight: 800; letter-spacing: -0.025em; }
-.login-lead { margin-top: 16px; font-size: 17px; line-height: 1.6; color: #c9d7ea; max-width: 40ch; }
-.login-apps { list-style: none; margin: 32px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.login-apps li {
-  display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 12px 0 5px;
-  border-radius: 999px; font-size: 13px; font-weight: 700; letter-spacing: .02em;
-  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14);
+.lg-form { width: 100%; max-width: 440px; display: grid; gap: 12px; }
+.lg-form h2 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.lg-input, .lg-pw .input {
+  width: 100%; height: 58px; padding: 0 18px;
+  border: 1px solid #ccd6e3; border-radius: 16px; background: #fff; font-size: 16px;
 }
-.login-app-icon {
-  width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
-  background: linear-gradient(140deg, var(--c), var(--c2)); color: #fff;
+.lg-pw .input { padding-right: 88px; }
+.lg-input:focus, .lg-pw .input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.lg-pw .pw-toggle { right: 12px; }
+.lg-btn {
+  margin-top: 8px; height: 50px; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--blue); color: #fff; font-size: 16px; font-weight: 700;
+  transition: background-color .15s;
 }
+.lg-btn:hover:not(:disabled) { background: var(--navy-2); }
+.lg-btn:disabled { opacity: .55; cursor: not-allowed; }
+.lg-help { text-align: center; font-size: 14.5px; font-weight: 600; color: var(--ink-2); margin-top: 6px; }
+.lg-note {
+  margin-top: 26px; padding: 14px 18px; border: 1px solid var(--blue); border-radius: 999px;
+  text-align: center; font-size: 13.5px; color: var(--blue); line-height: 1.4;
+}
+.lg-company { margin-top: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.lg-company img { width: 20px; height: 20px; object-fit: contain; }
+.lg-mobile-brand { display: none; }
 
-.login-panel { display: grid; justify-items: center; gap: 16px; }
-.login-card {
-  width: 100%; max-width: 420px; display: grid; gap: 18px;
-  background: #fff; color: var(--ink);
-  border-radius: 22px; padding: 34px 32px 28px;
-  box-shadow: 0 30px 70px -28px rgba(2, 8, 20, .75), 0 0 0 1px rgba(255, 255, 255, .06);
+/* --- Kolase ilustrasi --- */
+.kolase { position: absolute; right: 0; top: 10px; width: 440px; height: 450px; }
+.k-card {
+  position: absolute; background: #fff; border-radius: 18px; overflow: hidden;
+  box-shadow: 0 18px 40px -20px rgba(10, 22, 40, .45), 0 0 0 1px rgba(10, 22, 40, .05);
 }
-.login-card-head h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.01em; }
-.login-card-head p { margin-top: 4px; color: var(--muted); font-size: 14px; }
-.login-help { font-size: 13px; color: var(--muted); text-align: center; }
-.login-copy { font-size: 12.5px; color: #8fa6c6; }
-.btn-lg { min-height: 48px; font-size: 15px; border-radius: 12px; }
-.login .btn-primary { background: linear-gradient(135deg, #1e4d8f, #0b2545); }
-.login .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #15427d, #041024); }
+.k-cover {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 14px 16px; color: #fff; background: linear-gradient(140deg, var(--c), var(--c2));
+}
+.k-cover b { font-size: 18px; font-weight: 800; }
+.k-cover-lg { height: 120px; flex-direction: column; align-items: flex-start; justify-content: space-between; position: relative; }
+.k-cover-lg b { font-size: 34px; line-height: 1; }
+.k-cover-lg svg { position: absolute; right: 16px; bottom: 16px; }
+.k-bar { width: 58%; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .45); }
+.k-lines { display: grid; gap: 8px; padding: 14px 16px; }
+.k-lines i { display: block; height: 8px; border-radius: 6px; background: #e6ecf4; }
+.k-dms { left: 10px; top: 64px; width: 190px; transform: rotate(-7deg); }
+.k-dms .k-cover { justify-content: flex-start; }
+.k-tte { left: 150px; top: 0; width: 236px; z-index: 2; }
+.k-doc .k-lines { padding-bottom: 6px; }
+.k-sign { display: flex; align-items: center; justify-content: space-between; padding: 6px 16px 16px; }
+.k-qr { width: 52px; height: 52px; border-radius: 10px; border: 1px solid var(--line); display: grid; place-items: center; color: var(--c); }
+.k-ok { font-size: 12px; font-weight: 800; color: var(--ok); background: var(--ok-bg); padding: 5px 10px; border-radius: 999px; }
+.k-emv { left: 236px; top: 300px; width: 176px; padding: 16px; z-index: 3; display: grid; gap: 8px; justify-items: start; }
+.k-emv b { font-size: 14px; }
+.k-mini-icon { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; color: #fff; background: linear-gradient(140deg, var(--c), var(--c2)); }
+.k-pill { font-size: 11.5px; font-weight: 700; color: var(--ok); background: var(--ok-bg); padding: 4px 9px; border-radius: 999px; }
+.k-chip {
+  position: absolute; z-index: 4; display: inline-flex; align-items: center; gap: 6px;
+  height: 32px; padding: 0 12px; border-radius: 10px; font-size: 13px; font-weight: 700; color: #fff;
+  box-shadow: 0 10px 22px -12px rgba(10, 22, 40, .6);
+}
+.k-time { right: 8px; top: 34px; background: var(--navy-2); }
+.k-time span { color: #7fe0c0; font-size: 10px; }
+.k-temp { left: 40px; top: 214px; background: linear-gradient(140deg, var(--c), var(--c2)); }
+.k-bubble {
+  position: absolute; z-index: 4; left: 368px; top: 236px; width: 64px; height: 64px; border-radius: 50%;
+  display: grid; place-items: center; color: #fff; border: 4px solid #fff;
+  background: linear-gradient(140deg, var(--c), var(--c2)); box-shadow: 0 12px 26px -12px rgba(10, 22, 40, .6);
+}
+.k-logo {
+  position: absolute; z-index: 4; left: 96px; top: 6px; width: 56px; height: 56px; border-radius: 50%;
+  background: #fff; display: grid; place-items: center; box-shadow: 0 10px 24px -12px rgba(10, 22, 40, .55);
+}
+.k-logo img { width: 36px; height: 36px; object-fit: contain; }
 
+@media (max-width: 1100px) {
+  .kolase { transform: scale(.86); transform-origin: top right; }
+}
 @media (max-width: 900px) {
-  .login { grid-template-columns: 1fr; gap: 28px; padding: 36px 20px 28px; align-content: start; }
-  .login-logo { width: 56px; height: 56px; border-radius: 16px; }
-  .login-logo img { width: 40px; height: 40px; }
-  .login-company { margin-top: 16px; }
-  .login-brand h1 { font-size: 34px; }
-  .login-lead { font-size: 15px; }
-  .login-apps { margin-top: 20px; gap: 8px; }
-  .login-apps li { height: 32px; font-size: 12px; }
-  .login-app-icon { width: 22px; height: 22px; }
-  .login-card { padding: 26px 22px 22px; }
+  .lg { grid-template-columns: 1fr; }
+  .lg-left { display: none; }
+  .lg-right { border-left: 0; place-items: start center; padding: 48px 22px 32px; }
+  .lg-mobile-brand {
+    display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 18px;
+    font-weight: 800; font-size: 20px; color: var(--navy);
+  }
+  .lg-mobile-brand img { width: 64px; height: 64px; object-fit: contain; }
+  .lg-form h2 { text-align: center; font-size: 16px; color: var(--muted); font-weight: 600; }
+  .lg-note { border-radius: 16px; }
 }
 
 /* ------------------------------ Bilah atas ------------------------------- */
@@ -191,11 +225,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
   background: var(--card); border-bottom: 1px solid var(--line);
 }
 .topbar-in {
-  max-width: 1160px; margin: 0 auto; height: 60px; padding: 0 20px;
+  max-width: 1160px; margin: 0 auto; height: 64px; padding: 0 20px;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-weight: 700; }
-.brand img { width: 32px; height: 32px; object-fit: contain; }
+.brand img { width: 40px; height: 40px; object-fit: contain; }
+.brand span { font-size: 17px; font-weight: 800; color: var(--navy); }
 .nav { display: flex; align-items: center; gap: 4px; }
 .nav a, .nav button {
   border: 0; background: transparent; cursor: pointer;
@@ -210,7 +245,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 @media (max-width: 760px) {
   .menu-btn { display: inline-flex; }
   .nav {
-    display: none; position: absolute; top: 60px; left: 0; right: 0;
+    display: none; position: absolute; top: 64px; left: 0; right: 0;
     flex-direction: column; align-items: stretch; gap: 0;
     background: var(--card); border-bottom: 1px solid var(--line); padding: 8px 12px 12px;
   }
@@ -220,36 +255,23 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 
 /* ------------------------------ Halaman --------------------------------- */
-.page { max-width: 1160px; margin: 0 auto; padding: 28px 20px 64px; }
+.page { max-width: 1160px; margin: 0 auto; padding: 32px 20px 64px; }
 .page-head { margin-bottom: 28px; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
 .page-head h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.015em; line-height: 1.2; }
 .page-head p { color: var(--muted); margin-top: 6px; }
 
 /* ------------------------------ Beranda --------------------------------- */
-/* Panel sapaan selebar layar, isi tetap sejajar dengan konten halaman. */
-.hero {
-  position: relative; overflow: hidden;
-  padding: 40px 0 44px; color: #fff;
-  background: linear-gradient(120deg, #0b2545 0%, #15427d 60%, #1e4d8f 100%);
+/* Panel sapaan: putih bersih, judul besar hitam dengan nama berwarna biru
+   (satu gaya dengan halaman login). */
+.hero { border-bottom: 1px solid var(--line); padding: 44px 0 40px; background: #fff; }
+.hero-in { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+.hero-date { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.hero h1 {
+  margin-top: 8px; font-size: clamp(34px, 4.4vw, 54px); line-height: 1.08;
+  font-weight: 800; letter-spacing: -0.03em; color: var(--ink);
 }
-.hero::before {
-  content: ""; position: absolute; inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, .10) 1px, transparent 1.4px);
-  background-size: 20px 20px;
-  mask-image: linear-gradient(90deg, transparent 30%, #000 100%);
-  -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000 100%);
-}
-.hero-in { position: relative; z-index: 1; max-width: 1160px; margin: 0 auto; padding: 0 20px; }
-.hero-date { font-size: 13px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #a9bfdd; }
-.hero h1 { margin-top: 6px; font-size: clamp(26px, 3.4vw, 36px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
-.hero-lead { margin-top: 8px; color: #c9d7ea; font-size: 15px; }
-.hero-ornament span { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .14); }
-.hero-ornament span:nth-child(1) { width: 320px; height: 320px; right: -80px; top: -150px; }
-.hero-ornament span:nth-child(2) { width: 220px; height: 220px; right: 8%; bottom: -150px; border-color: rgba(255, 255, 255, .10); }
-.hero-ornament span:nth-child(3) {
-  width: 160px; height: 160px; right: 18%; top: -50px; border: 0;
-  background: radial-gradient(circle, rgba(11, 110, 92, .55), transparent 70%);
-}
+.hero h1 span { color: var(--blue); }
+.hero-lead { margin-top: 12px; color: var(--ink-2); font-size: 16px; }
 
 .section-label { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
 
@@ -300,9 +322,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 
 @media (max-width: 560px) {
-  .hero { padding: 26px 0 30px; }
-  .hero-ornament span:nth-child(1) { width: 200px; height: 200px; right: -70px; top: -90px; }
-  .hero-ornament span:nth-child(2), .hero-ornament span:nth-child(3) { display: none; }
+  .hero { padding: 28px 0 26px; }
+  .hero-lead { font-size: 14.5px; }
   .app-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .app-cover { height: 104px; padding: 12px; }
   .app-icon { top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 11px; }

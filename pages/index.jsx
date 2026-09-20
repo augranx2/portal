@@ -42,17 +42,14 @@ export default function Beranda({ session }) {
                 })
               : "\u00a0"}
           </p>
-          <h1>{now ? `${sapaan(now)}, ${namaDepan}` : `Halo, ${namaDepan}`}</h1>
+          <h1>
+            {now ? sapaan(now) : "Halo"}, <span>{namaDepan}</span>
+          </h1>
           <p className="hero-lead">
             {milik.length > 0
               ? `${milik.length} aplikasi tersedia untuk Anda. Pilih aplikasi untuk mulai bekerja.`
               : "Belum ada aplikasi yang terhubung dengan akun Anda."}
           </p>
-        </div>
-        <div className="hero-ornament" aria-hidden="true">
-          <span />
-          <span />
-          <span />
         </div>
       </section>
       <main className="page">

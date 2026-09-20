@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function PasswordInput({ id, value, onChange, autoComplete, required = true }) {
+export default function PasswordInput({ id, value, onChange, autoComplete, required = true, placeholder = "Password" }) {
   const [show, setShow] = useState(false);
   return (
     <div className="pw-wrap">
@@ -12,6 +12,7 @@ export default function PasswordInput({ id, value, onChange, autoComplete, requi
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
         required={required}
+        placeholder={placeholder}
       />
       <button type="button" className="pw-toggle" onClick={() => setShow((v) => !v)} aria-controls={id}>
         {show ? "Sembunyi" : "Lihat"}
