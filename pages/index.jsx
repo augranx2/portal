@@ -5,7 +5,20 @@ import AppIcon from "../components/AppIcon";
 import { APPS } from "../lib/apps";
 import { withPage } from "../lib/guard";
 
-export const getServerSideProps = withPage();
+const cekLogin = withPage();
+
+// SSO_APPS (Environment Variable portal): daftar aplikasi yang sudah memakai
+// login portal, dipisah koma, mis. "emv,emnv,spa,dms,tte". Kartu aplikasi
+// tersebut tidak lagi menampilkan keterangan "Masih login di aplikasi".
+export async function getServerSideProps(ctx) {
+  const hasil = await cekLogin(ctx);
+  if (!hasil.props) return hasil;
+  const ssoApps = String(process.env.SSO_APPS || "")
+    .split(",")
+    .map((x) => x.trim().toLowerCase())
+    .filter(Boolean);
+  return { props: { ...hasil.props, ssoApps } };
+}
 
 function sapaan(date) {
   const jam = Number(date.toLocaleString("en-US", { timeZone: "Asia/Jakarta", hour: "numeric", hour12: false }));
@@ -15,7 +28,7 @@ function sapaan(date) {
   return "Selamat malam";
 }
 
-export default function Beranda({ session }) {
+export default function Beranda({ session, ssoApps = [] }) {
   const [now, setNow] = useState(null);
   useEffect(() => setNow(new Date()), []);
 
@@ -90,7 +103,7 @@ export default function Beranda({ session }) {
                           Buka <span aria-hidden="true">→</span>
                         </span>
                       </div>
-                      {!app.sso && <span className="app-note">Masih login di aplikasi</span>}
+                      {!app.sso && !ssoApps.includes(app.key) && <span className="app-note">Masih login di aplikasi</span>}
                     </div>
                   </a>
                 );
