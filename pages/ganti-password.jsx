@@ -47,6 +47,11 @@ export default function GantiPassword({ session }) {
       {!wajib && <Topbar session={session} active="password" />}
       <main className={wajib ? "auth-form-side" : "page"} style={wajib ? { minHeight: "100vh" } : undefined}>
         <form className="auth-card panel panel-pad" onSubmit={onSubmit} style={{ maxWidth: 440 }}>
+          {!wajib && (
+            <a href="/" className="btn btn-ghost btn-sm" style={{ width: "fit-content" }}>
+              ← Kembali
+            </a>
+          )}
           <div>
             <h2>{wajib ? "Buat password Anda" : "Ganti password"}</h2>
             <p className="sub">
